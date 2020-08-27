@@ -10,4 +10,4 @@
 <br>
 
 <img align="left" src="https://github.com/scub3d/scub3d/blob/master/images/iasip.gif?raw=true" height="180px">
-<table align="right"><tr><td>1. This is a global game, anyone viewing this page can play at the same time</td></tr><tr><td>2. Refresh the page for changes. Sometimes images don't load. It's ok</td></tr><tr><td>3. To flag tiles, click the flag button in the top row, then click the tiles</td></tr><tr><td>4. New games can only be started after you have lost</td></tr></table>
+<table align="right"><tr><td>1. This is a global game, anyone viewing this page can play at the same time</td></tr><tr><td>2. Refresh the page for changes. Sometimes images don't load. It's ok</td></tr><tr><td>3. To flag tiles, click the flag button in the top row, then click the tiles</td></tr><tr><td>4. New games can only be started after winning/losing</td></tr></table>

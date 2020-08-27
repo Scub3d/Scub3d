@@ -843,7 +843,7 @@ minesweeper.get('/face_click', (request, response) => {
 				if(game.exists()) {
 					game_data = game.val();
 
-					if(game_data['game_state'] === GAME_STATE_LOST) {
+					if(game_data['game_state'] !== GAME_STATE_PLAYING) {
 						return database.ref("current_game_id").set(null).then(function(error) {
 							return response.status(204).end();
 						});
