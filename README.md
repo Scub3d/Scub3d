@@ -1,5 +1,5 @@
-<h2 align="center">Minesweeper in a README without js, css, iframes, or cookies</h2>
-
+<h2 align="center">Minesweeper in a README without js*, css, iframes, or cookies</h2>
+<h5 align="center">* I use js for the Firebase Cloud Functions but the README doesn't contain any code. It's just img and a tags</h5>
 <br>
 
 |Clickable Tiles|Rendered Minefield|

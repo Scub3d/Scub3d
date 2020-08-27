@@ -478,7 +478,7 @@ function place_mines(field, x, y) {
 
 // Click on tile x, y
 function click_on_tile(game, x, y) {
-	if (x < 0 || y < 0 || x > FIELD_WIDTH || y > FIELD_HEIGHT) return;
+	if (x < 0 || y < 0 || x > FIELD_WIDTH - 1 || y > FIELD_HEIGHT - 1) return;
 
 	if(game['flag_button_pressed']) {
 		if(game['field'][x][y] < 0) {
@@ -681,6 +681,18 @@ function get_digit(number, n) {
 	return Math.floor((number / Math.pow(10, n - 1)) % 10);
 }
 
+// If the game has been won, update the game state
+function checkIfWon(game) {
+	if(game['game_state'] !== GAME_STATE_PLAYING) return;
+
+	for(var x = 0; x < FIELD_WIDTH; x++) {
+		for(var y = 0; y < FIELD_HEIGHT; y++) { // If any of these tiles remain, the game has not been won
+			if(game['field'][x][y] === DEFAULT_NON_MINE_TILE_VALUE || game['field'][x][y] === FLAGGED_NON_MINE_TILE_VALUE || game['field'][x][y] === QUESTION_MARKED_NON_MINE_TILE_VALUE) return;
+		}
+	}
+
+	game['game_state'] = GAME_STATE_WON;
+}
 
 // Routing //
 minesweeper.get('/tile', (request, response) => {
@@ -757,7 +769,7 @@ minesweeper.get('/click', (request, response) => {
 	response.set('Cache-Control', "no-store, max-age=0");
 	response.append('Content-Type', 'image/svg+xml');
 
-	if (x === null || x === undefined || x === 'NaN'|| y === null || y === undefined || y === 'NaN') {
+	if (x === null || x === undefined || x === 'NaN'|| y === null || y === undefined || y === 'NaN' || x < 0 || x > FIELD_WIDTH - 1 || y < 0 || y > FIELD_HEIGHT - 1) {
 		return response.status(500).send("...don't...");
 	}
 
@@ -776,12 +788,13 @@ minesweeper.get('/click', (request, response) => {
 			if(game.exists()) {
 				gameData = game.val();
 
-				if(gameData['game_state'] === GAME_STATE_LOST) {
+				if(gameData['game_state'] !== GAME_STATE_PLAYING) {
 					return response.status(204).end();
 				}
 				
-				zone_value = game.val()['field'][x][y];
 				click_on_tile(gameData, x, y);
+
+				checkIfWon(gameData);
 
 				return database.ref("games").child(current_game_id).update(gameData).then(function() {
 					return response.status(204).end();
@@ -795,7 +808,6 @@ minesweeper.get('/click', (request, response) => {
 						return response.status(204).end();
 					});
 				});
-
 			}
 		});
 	});
@@ -824,7 +836,6 @@ minesweeper.get('/face', (request, response) => {
 minesweeper.get('/face_click', (request, response) => {
 	response.set('Cache-Control', "no-store, max-age=0");
 	response.append('Content-Type', 'image/svg+xml');
-	// TODO
 
 	return database.ref('current_game_id').once('value').then(function(game_id) {
 		if(game_id.exists()) {
@@ -920,7 +931,7 @@ minesweeper.get('/flags_remaining', (request, response) => {
 					gameData = game.val();
 
 					if(digit === 0) {
-						if(gameData['timeElapsed'] > 0) {
+						if(gameData['flags_remaining'] > 0) {
 							svg = menu_number_zero_svg();
 						} else {
 							svg = menu_number_dash_svg();
